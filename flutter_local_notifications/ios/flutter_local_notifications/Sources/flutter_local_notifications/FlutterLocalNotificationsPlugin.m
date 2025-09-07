@@ -324,7 +324,8 @@ static FlutterError *getFlutterError(NSError *error) {
           [[NSMutableDictionary alloc] init];
       NSLog(@"%@", notification.request.content.userInfo);
       activeNotification[ID] =
-          notification.request.content.userInfo[NOTIFICATION_ID] ?: notification.request.identifier;
+          notification.request.content.userInfo[NOTIFICATION_ID]
+              ?: notification.request.identifier;
       if (notification.request.content.title != nil) {
         activeNotification[TITLE] = notification.request.content.title;
       }
@@ -340,7 +341,8 @@ static FlutterError *getFlutterError(NSError *error) {
         NSMutableDictionary *data = [[NSMutableDictionary alloc] init];
         for (id key in userInfo) {
           // message.messageId
-          if ([key isEqualToString:@"gcm.message_id"] || [key isEqualToString:@"google.message_id"] ||
+          if ([key isEqualToString:@"gcm.message_id"] ||
+              [key isEqualToString:@"google.message_id"] ||
               [key isEqualToString:@"message_id"]) {
             continue;
           }
@@ -366,12 +368,15 @@ static FlutterError *getFlutterError(NSError *error) {
           }
 
           // message.to
-          if ([key isEqualToString:@"to"] || [key isEqualToString:@"google.to"]) {
+          if ([key isEqualToString:@"to"] ||
+              [key isEqualToString:@"google.to"]) {
             continue;
           }
 
-          // build data dict from remaining keys but skip keys that shouldn't be included in data
-          if ([key isEqualToString:@"aps"] || [key hasPrefix:@"gcm."] || [key hasPrefix:@"google."]) {
+          // build data dict from remaining keys but skip keys that shouldn't be
+          // included in data
+          if ([key isEqualToString:@"aps"] || [key hasPrefix:@"gcm."] ||
+              [key hasPrefix:@"google."]) {
             continue;
           }
 
@@ -383,9 +388,14 @@ static FlutterError *getFlutterError(NSError *error) {
           data[key] = userInfo[key];
         }
         NSError *error;
-        NSData *jsonData = [NSJSONSerialization dataWithJSONObject:data options:NSJSONWritingPrettyPrinted error:&error];
-        if(jsonData != nil) {
-          NSString *jsonString = [[NSString alloc] initWithData:jsonData encoding:NSUTF8StringEncoding];
+        NSData *jsonData =
+            [NSJSONSerialization dataWithJSONObject:data
+                                            options:NSJSONWritingPrettyPrinted
+                                              error:&error];
+        if (jsonData != nil) {
+          NSString *jsonString =
+              [[NSString alloc] initWithData:jsonData
+                                    encoding:NSUTF8StringEncoding];
           activeNotification[PAYLOAD] = jsonString;
         }
       }
@@ -620,10 +630,10 @@ static FlutterError *getFlutterError(NSError *error) {
 - (void)cancel:(NSString *)id
         result:(FlutterResult _Nonnull)result API_AVAILABLE(ios(10.0)) {
   UNUserNotificationCenter *center =
-        [UNUserNotificationCenter currentNotificationCenter];
-    NSArray *idsToRemove = @[id];
-    [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
-    [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
+      [UNUserNotificationCenter currentNotificationCenter];
+  NSArray *idsToRemove = @[ id ];
+  [center removePendingNotificationRequestsWithIdentifiers:idsToRemove];
+  [center removeDeliveredNotificationsWithIdentifiers:idsToRemove];
   result(nil);
 }
 
